@@ -5,7 +5,7 @@
   ,"version": "1.0"
   ,"background":
   {
-	"scripts"		:["js/PromiseUtil.js","js/axhrw.js","js/ExtensionFrameworkServer.js","js/background.js"]
+	"scripts"		:["js/config.js","js/PromiseUtil.js","js/axhrw.js","js/ExtensionFrameworkServer.js","js/background.js"]
 	,"persistent"	:false
   }
   ,"content_scripts":
