@@ -56,6 +56,7 @@ if( window.location.hostname === config.site )
 	
 			let calls	= [];
 			var trs		= doc.querySelectorAll('.c-history-ticket-details article tr');
+
 	
 			for(let i=0;i<trs.length;i++)
 			{
@@ -66,20 +67,34 @@ if( window.location.hostname === config.site )
 	
 				for(let j=0;j<tds.length;j++)
 				{
-					var td	= tds[j];
+					var td	= tds[ j ];
 	
 					for(var k=0;k<td.classList.length;k++)
 					{
 					//	console.log( td.classList );
 						let name = td.classList.item( k );
+						
 						//console.log( name );
 						if( /^qa-/.test(name) )
 						{
-							call[ name ] = td.textContent;
+							if( name == "qa-charge" )
+							{
+								let a = td.querySelector('a');
+								call[ name ]	= a.textContent.trim();
+							}
+							else
+							{
+								call[ name ] = td.textContent.trim();
+							}
 						}
 					}
 				}
 	
+				if( call['qa-charge']  == 'Retrieving charge' )
+				{
+					continue;
+				}
+
 				if( typeof call['qa-call-id']  !== 'undefined' )
 				{
 					if( call['qa-ticket-id'] === '' && call['qa-status'] != 'Completed' )
@@ -91,7 +106,7 @@ if( window.location.hostname === config.site )
 	
 			if( calls.length > 0  )
 			{
-				ext.sendCustomRequest( 'missed_call_found', calls );
+				ext.sendCustomRequest( 'calls_found', calls );
 			}
 		}
 		else
