@@ -1,30 +1,4 @@
 
-chrome.runtime.onInstalled.addListener(function()
-{
-  // Replace all rules ...
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    // With a new rule ...
-    chrome.declarativeContent.onPageChanged.addRules([
-      {
-        // That fires when a page's URL contains a 'g' ...
-        conditions: 
-		 [
-         	new chrome.declarativeContent.PageStateMatcher
-			({
-				  pageUrl: { hostPrefix: config.host_prefix }
-        	})
-        ],
-        // And shows the extension's page action.
-        actions: [ new chrome.declarativeContent.ShowPageAction() ]
-      }
-    ]);
-  });
-});
-
-
-
-
-
 var missedCalls				= {};
 var ext						= new ExtensionFrameworkServer();
 
@@ -34,14 +8,14 @@ ext.addPageLoadListener( config.load_listener ,true,()=>
 });
 
 var init    = new Date(); 
-ext.addCustomRequestListener('calls_arrived',(url,request,tab_id)=>
+ext.addCustomRequestListener('calls_found',(url,request,tab_id)=>
 {
 	console.log('Call Missed found', request, new Date() );
 	/*
 	 *Array(3)
 	Array(3)
 	qa-call-id : "114111378371"
-	qa-charge : "$0.012FromToAgentMinutesCharge+1 (202) 997-5097+1 (213) 205-0042-1$0.009+1 (213) 205-0042Browser-1$0.003"
+	qa-charge : ""
 	qa-datetime : "August 28, 2017 13:47"
 	qa-from : "+1 (202) 997-5097"
 	qa-hold-time : "00:00"
@@ -55,10 +29,29 @@ ext.addCustomRequestListener('calls_arrived',(url,request,tab_id)=>
 
 	if( Array.isArray( request ) )
 	{
+		let calls	= [];
+
 		request.forEach(i=>
 		{
             let d       = new Date( i['qa-datetime'] );
-            
+
+			var callInfo	= {
+				id				: i['qa-call-id']
+				,ticket_id		: i['qa-ticket-id']
+				,date			: getUTCMysqlTimestamp( i['qa-datetime'] )
+				,local_time		: getDateString(i['qa-datetime'] )
+				,to				: i['qa-to']
+				,from			: i['qa-from']
+				,agent			: i['qa-agent']
+				,call_status	: i['qa-status']
+				,wait_time		: i['qa-wait-time']
+				,hold_time		: i['qa-hold-time']
+				,wrap_up_time	: i['qa-wrap-up-time']
+				,minutes		: i['qa-minutes']
+				,charge			: i['qa-charge']
+			};
+
+			calls.push( callInfo );
 
 			if( typeof missedCalls[ i['qa-call-id'] ] === 'undefined' && d > init  )
 			{
@@ -71,6 +64,7 @@ ext.addCustomRequestListener('calls_arrived',(url,request,tab_id)=>
 
 					method				: 'POST'			//,'POST',...
 					,url				: config.create_ticket_url		//Required
+					//,headers			: { "connection"	: config.http_connection }
 					,data				:
 					{
 						title			: 'Missed Call From '+i['qa-from']+' '+date
@@ -91,9 +85,48 @@ ext.addCustomRequestListener('calls_arrived',(url,request,tab_id)=>
 				});
 			}
 		});
+
+		axhrw
+		({
+			method	: 'POST'				//,'POST',...
+			,url	: config.add_calls_url	//Required
+			,data	: calls
+		})
+		.then((response)=>
+		{
+			
+		});
 	}
 });
 
+
+function getUTCMysqlTimestamp( str )
+{
+    let d       = new Date(str);
+
+	let month	= d.getUTCMonth()<9 ? '0'+(d.getUTCMonth()+1):(d.getUTCMonth()+1);
+	let days	= d.getUTCDate() < 10 ? '0'+d.getUTCDate() : d.getUTCDate();
+
+    let seconds = d.getUTCSeconds() < 10 ? '0'+d.getUTCSeconds() : d.getUTCSeconds();
+    let min     = d.getUTCMinutes() < 10 ? '0'+d.getUTCMinutes() : d.getUTCMinutes();
+    let hour    = d.getUTCHours()<10 ? '0'+d.getUTCHours() : d.getUTCHours();
+
+	return d.getFullYear()+'-'+month+'-'+days+' '+hour+':'+min+':'+seconds;
+}
+
+function getMysqlTimestamp( str )
+{
+    let d       = new Date(str);
+
+	let month	= d.getMonth()<9 ? '0'+(d.getMonth()+1):(d.getMonth()+1);
+	let days	= d.getDate()  < 10 ? '0'+d.getDate() : d.getDate();
+
+    let seconds = d.getSeconds() < 10 ? '0'+d.getSeconds() : d.getSeconds();
+    let min     = d.getMinutes() < 10 ? '0'+d.getMinutes() : d.getMinutes();
+    let hour    = d.getHours()<10 ? '0' + d.getHours() : d.getHours();
+
+	return d.getFullYear()+'-'+month+'-'+days+' '+hour+':'+min+':'+seconds;
+}
 
 function getDateString( str )
 {
