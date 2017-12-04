@@ -90,7 +90,7 @@ ext.addCustomRequestListener('calls_found',(url,request,tab_id)=>
 		({
 			method	: 'POST'				//,'POST',...
 			,url	: config.add_calls_url	//Required
-			,data	: calls
+			,data	: { 'calls' : calls }
 		})
 		.then((response)=>
 		{
