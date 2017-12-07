@@ -7,7 +7,11 @@ ext.addPageLoadListener( config.load_listener ,true,()=>
 	console.log('Page Loaded', new Date() );
 });
 
-var init    = new Date(); 
+var init    = new Date();
+
+if( config.debug )
+	var init    = new Date('2017-01-01 00:00:00'); 
+
 ext.addCustomRequestListener('calls_found',(url,request,tab_id)=>
 {
 	console.log('Call Missed found', request, new Date() );
@@ -53,7 +57,7 @@ ext.addCustomRequestListener('calls_found',(url,request,tab_id)=>
 
 			calls.push( callInfo );
 
-			if( typeof missedCalls[ i['qa-call-id'] ] === 'undefined' && d > init  )
+			if( typeof missedCalls[ i['qa-call-id'] ] === 'undefined' && d > init  && i['qa-status'] != 'completed' )
 			{
 				missedCalls[ i['qa-call-id'] ] = 1;
                 let date = getDateString( i['qa-datetime'] );
