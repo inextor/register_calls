@@ -97,10 +97,7 @@ if( window.location.hostname === config.site )
 
 				if( typeof call['qa-call-id']  !== 'undefined' )
 				{
-					if( call['qa-ticket-id'] === '' && call['qa-status'] != 'Completed' )
-					{
-						calls.push( call );
-					}
+					calls.push( call );
 				}
 			}
 	
