@@ -39,7 +39,7 @@ ext.addCustomRequestListener('calls_found',(url,request,tab_id)=>
 				id				: i['qa-call-id']
 				,ticket_id		: i['qa-ticket-id']
 				,date			: getUTCMysqlTimestamp( i['qa-datetime'] )
-				,local_time		: getDateString(i['qa-datetime'] )
+				,local_time		: getMysqlTimestamp( i['qa-datetime'] )
 				,to				: i['qa-to']
 				,from			: i['qa-from']
 				,agent			: i['qa-agent']
