@@ -111,7 +111,7 @@ if( window.location.hostname === config.site )
 			window.location.href="https://shuttlewizard.zendesk.com/agent/admin/voice";
 	
 		}
-	},60000 );
+	},25000 );
 	
 	var interval_id2	= setInterval(()=>
 	{
@@ -138,7 +138,7 @@ if( window.location.hostname === config.site )
 	    {
 	        window.location.reload( true );
 	    }
-	},120000);
+	},60000);
 	
 	var interval_id3 = setInterval(()=>
 	{

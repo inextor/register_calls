@@ -57,7 +57,7 @@ ext.addCustomRequestListener('calls_found',(url,request,tab_id)=>
 
 			calls.push( callInfo );
 
-			if( typeof missedCalls[ i['qa-call-id'] ] === 'undefined' && d > init  && i['qa-status'] != 'completed' )
+			if( typeof missedCalls[ i['qa-call-id'] ] === 'undefined' && d > init  && i['qa-status'] == 'Abandoned In Queue' )
 			{
 				missedCalls[ i['qa-call-id'] ] = 1;
                 let date = getDateString( i['qa-datetime'] );
