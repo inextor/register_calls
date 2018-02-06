@@ -31,7 +31,11 @@ if( window.location.hostname === config.site )
 	
 		console.log('ExtensionFor: '+window.location.href );
 
-		if( window.location.href == "https://shuttlewizard.zendesk.com/agent/admin/voice" )
+		if( window.location.href != "https://shuttlewizard.zendesk.com/agent/admin/voice" )
+		{
+			window.location.href="https://shuttlewizard.zendesk.com/agent/admin/voice";
+		}
+		else
 		{
 			let iframe = document.querySelector('iframe[src="/voice/admin/settings"]');
 			if( !iframe )
@@ -106,11 +110,6 @@ if( window.location.hostname === config.site )
 				ext.sendCustomRequest( 'calls_found', calls );
 			}
 		}
-		else
-		{
-			window.location.href="https://shuttlewizard.zendesk.com/agent/admin/voice";
-	
-		}
 	},25000 );
 	
 	var interval_id2	= setInterval(()=>
@@ -125,6 +124,7 @@ if( window.location.hostname === config.site )
 	
 		var first = doc.querySelector('.c-btn.c-pagination--left');
 		var one		= doc.querySelector('button.c-btn.is-active[value="1"]');
+		var historyAnchor = doc.querySelector('li.tab-history span:nth-child(2)');
 	
 		if( one )
 		{
@@ -133,6 +133,10 @@ if( window.location.hostname === config.site )
 		else if( first )
 	    {
 		    first.click();
+		}
+	    else if( historyAnchor )
+		{
+			historyAnchor.click();
 		}
 	    else
 	    {
