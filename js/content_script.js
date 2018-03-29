@@ -164,7 +164,7 @@ if( window.location.hostname === config.site )
 	    {
 	        window.location.reload( true );
 	    }
-	},60000);
+	},4*60000);
 	
 	var interval_id3 = setInterval(()=>
 	{
