@@ -1,6 +1,3 @@
-
-console.log('Inserted nextor');
-
 if( window.location.hostname === config.site )
 {
 	var ext = new ExtensionFrameworkClient();
@@ -129,6 +126,22 @@ if( window.location.hostname === config.site )
 			if( calls.length > 0  )
 			{
 				ext.sendCustomRequest( 'calls_found', calls );
+			}
+
+			if( divSettings )
+			{
+				let text = divSettings.textContent;
+				if( text == 'History' )
+				{
+					let panels		= Array.from( doc.querySelectorAll('.voice-settings li[aria-selected="false"]>div') );
+					let settings	= panels.find( i=>i.textContent == 'Settings' ); 
+
+					if( settings )
+					{
+						settings.click();
+						return; 
+					}
+				}
 			}
 		}
 	},25000 );
