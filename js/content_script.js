@@ -30,31 +30,52 @@ if( window.location.hostname === config.site )
 		}
 	
 		console.log('ExtensionFor: '+window.location.href );
-
-		if( window.location.href != "https://shuttlewizard.zendesk.com/agent/admin/voice" )
+		if( window.location.href == 'https://'+config.host_prefix+'/agent/admin/overview' )
 		{
-			window.location.href="https://shuttlewizard.zendesk.com/agent/admin/voice";
+			let a			= Array.from( document.querySelectorAll('li>a') );
+			let talk_link	= a.find(i=> i.getAttribute('href') == '/agent/admin/voice' );
+
+			if( talk_link )
+				talk_link.click();
+
+		}
+		else if( window.location.href != 'https://'+config.host_prefix+'/agent/admin/voice' )
+		{
+			let gear = document.querySelector('.toolbar_link.branding__color--contrast.admin_link');
+			gear.click();
 		}
 		else
 		{
 			let iframe = document.querySelector('iframe[src="/voice/admin/settings"]');
+
 			if( !iframe )
 			{
+				//DO something more than return please
 				return;
 			}
-	
+
 			let doc = iframe.contentWindow.document;
 			if( ! doc )
-				return;
-	
-			var voiceSettings = doc.querySelector('.voice-settings-tabs');
-			if( voiceSettings )
 			{
-				var exportButton = doc.querySelector('.c-report-table--header--pull-right');
-				if( !exportButton )
+				//DO something more than return please
+				return;
+			}
+
+			var divSettings = doc.querySelector('.voice-settings li[aria-selected="true"]>div');
+
+			if( divSettings )
+			{
+				let text = divSettings.textContent;
+				if( text == 'Settings' )
 				{
-					let history = doc.querySelector('.c-tab-list__item.tab-history');
-					history.click();
+					let panels	= Array.from( doc.querySelectorAll('.voice-settings li[aria-selected="false"]>div') );
+					let history	= panels.find( i=>i.textContent == 'History' ); 
+
+					if( history )
+					{
+						history.click();
+						return; 
+					}
 				}
 			}
 	
@@ -114,6 +135,7 @@ if( window.location.hostname === config.site )
 	
 	var interval_id2	= setInterval(()=>
 	{
+
 		let iframe = document.querySelector('iframe[src="/voice/admin/settings"]');
 		if( !iframe )
 			return;
@@ -138,7 +160,7 @@ if( window.location.hostname === config.site )
 		{
 			historyAnchor.click();
 		}
-	    else
+		else
 	    {
 	        window.location.reload( true );
 	    }
@@ -149,4 +171,3 @@ if( window.location.hostname === config.site )
 	    window.location.reload( true );
 	},3600000);
 }
-
